@@ -1,81 +1,112 @@
-# DuckDB-Wasm + Plotly Dashboard
+# DuckDB Multi-Component Data Platform
 
-A static web application that uses DuckDB-Wasm to query data from a DuckDB database and visualize it with Plotly.js charts.
+A comprehensive data platform demonstrating modern data engineering practices with Java backend data generation, SQL-based data operations, and interactive web visualization using DuckDB and Plotly.js.
 
-## Features
+## Project Overview
 
-- **DuckDB-Wasm**: Client-side SQL querying without a server
-- **Plotly.js**: Interactive data visualization
-- **Dynamic Filtering**: Filter data by category with dropdown selection
-- **Static Hosting**: No backend required - runs entirely in the browser
+This project showcases a complete data pipeline with:
 
-## Demo
+- **Java Backend** (`core/java/`): Enterprise-grade data generation with ECS logging
+- **SQL Scripts** (`sql/`): Reusable database operations with SQLFluff linting support
+- **Web Frontend** (`web/`): Interactive data visualization with DuckDB-Wasm and Plotly.js
+- **Data Management** (`data/`): Structured data storage with Data Package specification
+- **Centralized Logging** (`logs/`): JSON-structured application logs
 
-The site is automatically deployed to GitHub Pages: [https://gsarkar-splunk.github.io/testing123/](https://gsarkar-splunk.github.io/testing123/)
+## Quick Start
 
-## Setup for GitHub Pages
+1. **Generate Data (Java)**:
+   ```bash
+   cd core/java
+   mvn compile exec:java
+   ```
 
-This repository is configured to automatically deploy to GitHub Pages using GitHub Actions. To enable it:
+2. **View Data (Web)**:
+   ```bash
+   # Serve from project root
+   python -m http.server 8000
+   # Open http://localhost:8000/
+   ```
 
-1. Go to your repository settings
-2. Navigate to "Pages" in the left sidebar
-3. Under "Source", select "GitHub Actions"
-4. The workflow will automatically deploy on every push to the `main` branch
+3. **Explore Database**:
+   ```bash
+   # The generated database is at data/mydata.db
+   ```
 
-### Manual Setup (Alternative)
+## Project Components
 
-If you prefer manual deployment:
+### Java Backend (`core/java/`)
+- **Purpose**: Generate structured test data for the DuckDB database
+- **Features**: ECS-compliant logging, Maven project structure, external SQL files
+- **Technologies**: Java, DuckDB JDBC driver, Log4j2 with ECS layout
+- **Output**: Creates `data/mydata.db` with structured sample data
 
-1. Go to repository Settings → Pages
-2. Under "Source", select "Deploy from a branch"
-3. Choose `main` branch and `/ (root)` folder
-4. Click Save
+### SQL Operations (`sql/`)
+- **Purpose**: Reusable SQL scripts for database operations
+- **Features**: Table creation, data verification, record counting
+- **Linting**: SQLFluff-ready for code quality
+- **Usage**: Consumed by Java application and available for other tools
 
-## Local Development
+### Web Visualization (`web/`)
+- **Purpose**: Interactive data exploration and visualization
+- **Features**: Client-side SQL querying, dynamic filtering, responsive charts
+- **Technologies**: DuckDB-Wasm, Plotly.js, vanilla JavaScript
+- **Demo**: [Live on GitHub Pages](https://gsarkar-splunk.github.io/testing123/)
 
-To run locally, you need to serve the files over HTTP (not file://) due to CORS restrictions:
+### Data Management (`data/`)
+- **Purpose**: Centralized data storage with metadata
+- **Features**: Data Package specification, structured schema documentation
+- **Format**: DuckDB database with JSON metadata
 
-### Using Python:
-```bash
-python -m http.server 8000
+## Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Java Backend  │───▶│   DuckDB File   │◀───│  Web Frontend   │
+│  (Data Creator) │    │  (data/*.db)    │    │ (Visualization) │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       ▲
+         ▼                       │
+┌─────────────────┐              │
+│   SQL Scripts   │──────────────┘
+│  (Operations)   │
+└─────────────────┘
 ```
 
-Then open http://localhost:8000 in your browser.
+## Development Workflow
 
-## File Structure
+1. **Data Generation**: Use Java application to create/populate database
+2. **Data Verification**: Use SQL scripts to validate and explore data
+3. **Web Development**: Build visualizations with live database queries
+4. **Quality Assurance**: Lint SQL with SQLFluff, format Java with Maven
 
-```
-├── index.html          # Main HTML page
-├── script.js           # JavaScript application logic
-├── styles.css          # CSS styling
-├── data/
-│   └── mydata.db      # DuckDB database file
-└── .github/
-    └── workflows/
-        └── deploy.yml  # GitHub Actions deployment workflow
-```
+## Technologies & Standards
+
+- **Backend**: Java 11+, Maven, DuckDB JDBC, Log4j2
+- **Database**: DuckDB (embedded analytical database)
+- **Frontend**: DuckDB-Wasm, Plotly.js, ES6 modules
+- **Logging**: Elastic Common Schema (ECS) compliance
+- **Data**: Frictionless Data Package specification
+- **Linting**: SQLFluff (SQL), Eclipse formatter (Java)
 
 ## Database Schema
 
-The application expects a DuckDB database (`data/mydata.db`) with the following structure:
-
 ```sql
 CREATE TABLE data (
-    category TEXT,
-    x_value NUMERIC,
-    y_value NUMERIC
+    category TEXT,      -- Categories: A, B, C
+    x_value INTEGER,    -- Values: 1-20
+    y_value DOUBLE      -- Generated using mathematical formula
 );
 ```
 
-## Technologies Used
+## Deployment
 
-- **DuckDB-Wasm**: For client-side SQL querying
-- **Plotly.js**: For interactive charts
-- **GitHub Pages**: For static site hosting
-- **GitHub Actions**: For automated deployment
+- **GitHub Pages**: Web frontend automatically deploys on push to `main`
+- **Local Development**: Use HTTP server for CORS compliance
+- **Database**: Portable DuckDB file, no server required
 
-## Browser Compatibility
+## Getting Started
 
-- Modern browsers with ES6 module support
-- WebAssembly support required for DuckDB-Wasm
-- HTTPS required for some features (automatically provided by GitHub Pages)
+See individual component READMEs for detailed setup:
+- [Java Backend Setup](core/java/README.md)
+- [SQL Scripts Documentation](sql/README.md)
+- [Web Frontend Guide](web/README.md)

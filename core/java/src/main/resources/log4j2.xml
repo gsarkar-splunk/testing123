@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- Console Appender with Colorized Human-Readable Format -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %highlight{%-5level}{FATAL=bright red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue} %style{%logger{36}}{bright black} - %msg%n"/>
+        </Console>
+        
+        <!-- File Appender with ECS JSON Format -->
+        <File name="JsonAppender" fileName="../../logs/java-programs.log">
+            <EcsLayout serviceName="duckdb-java-app" serviceVersion="1.0.0"/>
+        </File>
+    </Appenders>
+    
+    <Loggers>
+        <!-- Application Logger - Detailed app logging -->
+        <Logger name="com.example" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="JsonAppender"/>
+        </Logger>
+        
+        <!-- Root Logger - Minimal logging for third-party libraries -->
+        <Root level="ERROR">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -8,7 +8,7 @@ const db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
 await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
 // --- Load the DuckDB .db file ---
-const response = await fetch("data/mydata.db");
+const response = await fetch("../data/mydata.db");
 if (!response.ok) {
   throw new Error(`Failed to fetch mydata.db: ${response.status}`);
 }
@@ -58,16 +58,53 @@ async function updatePlot(selectedCategory) {
   const x = rows.map(r => r.x);
   const y = rows.map(r => r.y);
 
-  Plotly.newPlot("plot", [{
+  // Define trace data
+  const trace = {
     x,
     y,
     mode: "lines+markers",
     type: "scatter",
     name: selectedCategory
-  }], {
-    title: `Plot of ${yCol} vs ${xCol} for ${selectedCategory}`,
-    xaxis: { title: xCol },
-    yaxis: { title: yCol },
-    margin: { t: 50 }
-  });
+  };
+
+  // Define reusable font configuration
+  const fontFamily = "'Lato', 'Gill Sans', 'Lato', sans-serif";
+  const titleFont = { size: 18 };
+  const axisFont = { size: 14 };
+  const tickFont = { size: 12, color: '#666' };
+
+  // Define layout configuration
+  const layout = {
+    title: {
+      text: `Plot of ${yCol} vs ${xCol} for ${selectedCategory}`,
+      font: titleFont
+    },
+    xaxis: { 
+      title: { text: xCol, font: axisFont },
+      tickfont: tickFont
+    },
+    yaxis: { 
+      title: { text: yCol, font: axisFont },
+      tickfont: tickFont
+    },
+    font: {
+      family: fontFamily,
+      size: 12,
+      color: '#333'
+    },
+    margin: { t: 50 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+  };
+
+  // Define config options (if needed)
+  const config = {
+    displayModeBar: false,       // show the modebar
+    displaylogo: false,          // remove "Produced with Plotly" button
+    scrollZoom: true,            // enables scroll wheel zooming
+    responsive: true             // optional, makes it responsive
+  };
+
+  // Create the plot
+  Plotly.newPlot("plot", [trace], layout, config);
 }
